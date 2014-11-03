@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ES">
+<head>
+{% load staticfiles %}
+ <title>{% block titulo %}{% endblock %} </title>     
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="" />
+<meta name="author" content="" />
+<!-- styles -->
+<link href="{% static "assets/css/bootstrap.css" %}" rel="stylesheet" />
+<link href="{% static "assets/css/bootstrap-responsive.css" %}" rel="stylesheet" />
+<link href="{% static "assets/css/docs.css" %}" rel="stylesheet" />
+<link href="{% static "assets/css/prettyPhoto.css" %}" rel="stylesheet" />
+<link href="{% static "assets/js/google-code-prettify/prettify.css" %}" rel="stylesheet" />
+<link href="{% static "assets/css/flexslider.css" %}" rel="stylesheet" />
+<link href="{% static "assets/css/style.css" %}" rel="stylesheet" />
+<link href="{% static "assets/color/success.css" %}" rel="stylesheet" />
+<!-- Estilo para el datepicker del diario -->
+<link href="{% static "assets/css/datepicker.css" %}" rel="stylesheet" />
+<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+<!--[if lt IE 9]>
+<script src="{% static "http://html5shim.googlecode.com/svn/trunk/html5.js" %}"></script>
+<![endif]-->
+{% block estilo %}{% endblock %}
+<!--<script src="{% static "assets/js/jquery-1.8.2.min.js" %}"></script>
+<script src="{% static "assets/js/jquery.easing.1.3.js" %}"></script>
+<script src="{% static "assets/js/google-code-prettify/prettify.js" %}"></script>
+<script src="{% static "assets/js/modernizr.js" %}"></script>-->
+<script src="{% static "assets/js/bootstrap.js" %}"></script>
+<script src="{% static "assets/js/jquery.elastislide.js" %}"></script>
+<script src="{% static "assets/js/jquery.flexslider.js" %}"></script>
+<script src="{% static "assets/js/jquery.tweet.js" %}"></script>
+<script src="{% static "assets/js/jquery.prettyPhoto.js" %}"></script>
+<script src="{% static "assets/js/application.js" %}"></script>
+<!-- js del diario -->
+<script src="{% static "assets/js/bootstrap-datepicker.js" %}"></script>
+<script src="{% static "assets/js/diario.js" %}"></script>
+<!--[if (gte IE 6)&(lte IE 8)]>
+<script src="{% static "selectivizr.js" %}"></script>
+<![endif]-->
+<!-- Portfolio hover -->
+<script src="{% static "assets/js/hover/jquery-hover-effect.js" %}"></script>
+<script src="{% static "assets/js/hover/setting.js" %}"></script>
+<script src="{% static "assets/js/custom.js" %}"></script>
+<!-- fav and touch icons -->
+<link rel="shortcut icon" href="assets/ico/favicon.ico" />
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="{% static "assets/ico/apple-touch-icon-144-precomposed.png" %}" />
+<link rel="apple-touch-icon-precomposed" sizes="114x114" href="{% static "assets/ico/apple-touch-icon-114-precomposed.png" %}" />
+<link rel="apple-touch-icon-precomposed" sizes="72x72" href="{% static "assets/ico/apple-touch-icon-72-precomposed.png" %}" />
+<link rel="apple-touch-icon-precomposed" href="{% static "assets/ico/apple-touch-icon-57-precomposed.png" %}" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+</head>
+<body>
+{% if not usuario %}
+<header>
+<!-- Navbar
+================================================== -->
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <!-- logo -->
+      <a class="brand logo" href="/principal">
+      <img src="{% static "assets/img/logo.png" %}" alt="" / width=150>
+      </a>
+      <!-- end logo -->
+      <!-- top menu -->
+      <div>
+        <nav>{% if not usuariocompleto %}
+          <ul class="nav topnav">
+          <li class="dropdown warning">
+          <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-user icon-white"></i> Login<strong class="caret white"></strong></a>
+          <div class="dropdown-menu" style="padding: 15px; padding-bottom: 0px;">
+            <h3>Inciar sesión:</h3>
+          <form class="form col-md-12 center-block" id='newuser' method='post' enctype='multipart/form-data' action=''> {% csrf_token %}
+            <div class="form-group">
+              {{loginuser.username}}
+            </div>
+            <div class="form-group">
+              {{loginuser.password}}
+            </div>
+            
+            <div class="form-group">
+              <input type="hidden" name="valor" value="login">
+              <input type="hidden" id="latitud" name="latitud" value="">
+              <input type="hidden" id="longitud" name="longitud" value="">
+              <button type="submit" class="btn btn-primary btn-lg btn-block btn-warning" onclick="if(!this.form.latitud.value){alert('Debe de aceptar los terminos y condiciones para registrarse');return false}">Iniciar Sesión</button>
+            </div>
+          </form>
+                </div>  
+          </li>
+          <li class="dropdown danger">
+          <a href="#registro"><i class="icon-edit icon-white"></i> Registro</a>
+          </li>     
+        </ul> 
+        {% endif %}  
+        </nav>
+      </div>
+      <!-- end menu -->
+    </div>
+  </div>
+</div>
+</header>
+{% endif %}
+{% if usuario %}
+<header>
+  <div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <!-- logo -->
+      <a class="brand logo" href="/principal">
+      <img src="{% static "assets/img/logo.png" %}" alt="" />
+      </a>
+      <!-- end logo -->
+      <!-- top menu -->
+      <div>
+        <nav>
+        <ul class="nav topnav">
+          <li class="dropdown success">
+          <a href="/principal"><i class="icon-home icon-white"></i> Home</a>
+          </li>
+          <li class="dropdown primary">
+          <a href="/misarchivos"><i class="icon-envelope icon-white"></i> Box</a>
+          </li>
+          <li class="dropdown primary mensaje">
+          <a href="/mensajes"><i class="icon-envelope icon-white"></i> Mensajes</a>
+          </li>
+          <li class="dropdown danger">
+            {% if usuario.genero == "hombre" %}
+              {% if usuario.orientacion_sex == "heterosexual" or usuario.orientacion_sex == "bisexual" %}
+              <a href="/vota?genero=mujer"><i class="icon-star icon-white"></i> ¡Vota!</a>
+              {% endif %}
+              {% if usuario.orientacion_sex == "homosexual" or usuario.orientacion_sex == "asexual" %}
+              <a href="/vota?genero=hombre"><i class="icon-star icon-white"></i> ¡Vota!</a>
+              {% endif %}
+            {% endif %}
+            {% if usuario.genero == "mujer" %}
+              {% if usuario.orientacion_sex == "heterosexual" or usuario.orientacion_sex == "bisexual" %}
+              <a href="/vota?genero=hombre"><i class="icon-star icon-white"></i> ¡Vota!</a>
+              {% endif %}
+              {% if usuario.orientacion_sex == "homosexual" or usuario.orientacion_sex == "asexual" %}
+              <a href="/vota?genero=mujer"><i class="icon-star icon-white"></i> ¡Vota!</a>
+              {% endif %}
+            {% endif %}
+          </li>
+          <li class="dropdown warning">
+          <a href="/miagenda"><i class="icon-calendar icon-white"></i> Agenda</a>
+          </li>
+          <li class="dropdown info">
+          <a href="/midiario"><i class="icon-pencil icon-white"></i> Mi Diario</a>
+          </li>
+            <li class="inverse dropdown ">
+          <a class="dropdown-toggle" href="#" data-toggle="dropdown"><i class="icon-cog icon-white"></i> Opciones</a>
+          <ul class="dropdown-menu" style="display: none;">
+            <div class="container">
+              <div class="span1">
+               <a href="/{{perfil.username}}/"><img src="/media/{{perfil.imagen}}" width="50" align="left">
+             </div> <h5>{{perfil.username}}</h5>
+             Mi Perfil</a>
+            </div>
+            {% if usuario.perfilactivado == 'verdadero' %}<li><a href="/completarregistro/">Cambiar al perfil falso</a></li>{% endif %}
+            {% if usuario.perfilactivado == 'falso' %}<li><a href="/completarregistro/">Cambiar al perfil verdadero</a></li>{% endif %}
+            <li><a href="/editperfil/">Editar Perfil</a></li>
+            <li><a href="/logout/">Cerrar Sesión</a></li>
+          </ul>
+          </li>
+        </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+</header>
+{% endif %}
+<body>
+{% block contenido %}{% endblock %} 
+
+
+
+<!-- Footer
+================================================== -->
+<footer class="footer">
+<div class="verybottom">
+  <div class="container">
+    <div class="row">
+      <div class="span6">
+        <p>
+          Trabajo para la asignatura de Ingeniería Web. Universidad de Córdoba
+        </p>
+      </div>
+      <div class="span6">
+        <p class="pull-right">
+          Diseñado por Sergio Pino, Adam Mora, Juan Antonio Arboledas y Francisco Rodriguez
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</footer>
+<script>
+(function(){
+// Append a close trigger for each block
+$('.box-tile .content').append('<span class="close">x</span>');
+// Show window
+function showContent(elem){
+hideContent();
+elem.find('.content').addClass('expanded');
+elem.addClass('cover');
+}
+// Reset all
+function hideContent(){
+$('.box-tile  .content').removeClass('expanded');
+$('.box-tile  li').removeClass('cover');
+}
+// When a li is clicked, show its content window and position it above all
+$('.box-tile  li').click(function() {
+showContent($(this));
+});
+// When tabbing, show its content window using ENTER key
+$('.box-tile  li').keypress(function(e) {
+if (e.keyCode == 13) {
+showContent($(this));
+}
+});
+// When right upper close element is clicked  - reset all
+$('.box-tile  .close').click(function(e) {
+e.stopPropagation();
+hideContent();
+});
+// Also, when ESC key is pressed - reset all
+$(document).keyup(function(e) {
+if (e.keyCode == 27) {
+hideContent();
+}
+});
+})();
+</script>
+</body>
+</html>

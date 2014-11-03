@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+  {% block titulo %} sLavida {% endblock %}
+{% load staticfiles %}
+{% block estilo %}
+  <script src="{% static "assets/js/jquery-1.8.2.min.js" %}"></script>
+  <script src="{% static "assets/js/jquery.easing.1.3.js" %}"></script>
+  <script src="{% static "assets/js/google-code-prettify/prettify.js" %}"></script>
+  <script src="{% static "assets/js/modernizr.js" %}"></script>
+  <script src="http://maps.google.com/maps/api/js?sensor=false" type="text/javascript"></script>  
+    <script>
+      function get_loc() {
+             if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(coordenadas);
+             }else{
+                alert('Este navegador es algo antiguo, actualiza para usar el API de localización');                  
+            }
+      }
+      function coordenadas(position) {
+            var lat = position.coords.latitude;
+            var lon = position.coords.longitude;
+      }
+    </script>
+    <script>  
+      function success(position) {  
+       var latitud = position.coords.latitude;      
+       var longitud = position.coords.longitude; 
+       document.getElementById("latitud").value = latitud;
+        document.getElementById("longitud").value = longitud;
+      }  
+       function error(msg) {  
+       alert("Su navegador no recoge bien la localización");  
+      }  
+       
+      if (navigator.geolocation) {  
+       navigator.geolocation.getCurrentPosition(success, error,{maximumAge:60000, timeout: 4000});  
+      } else {  
+       error('Actualiza el navegador web para usar el API de localización');  
+      }  
+       
+    </script>  
+{% endblock %}
+{% block contenido %}  
+<body>
+<section id="intro">
+<div class="jumbotron masthead">
+  <div class="container">
+    <div class="row">
+      <div class="span12">
+        <!-- Place somewhere in the <body> of your page -->
+        <div id="mainslider" class="flexslider">
+          <ul class="slides">
+            <li data-thumb="{% static "assets/img/slides/flexslider/img1.jpg" %}">
+            <img src="{% static "assets/img/slides/flexslider/img1.jpg" %}" alt="" />
+            <div class="flex-caption primary">
+              <h2>Conoce personas de tu ciudad</h2>
+              <h4>sLavida el mejor lugar para chatear, hacer contactos nuevos, compartir intereses y tener una cita.</h4>
+            </div>
+            </li>
+            <li data-thumb="{% static "assets/img/slides/flexslider/img2.jpg" %}">
+            <img src="{% static "assets/img/slides/flexslider/img2.jpg" %}" alt="" />
+            <div class="flex-caption warning">
+              <h2>Comparte tus archivos</h2>
+              <h4>Ahora puedes compartir ficheros con las personas y conseguir todos los que necesites</h4>
+            </div>
+            </li>
+            <li data-thumb="{% static "assets/img/slides/flexslider/img3.jpg" %}">
+            <img src="{% static "assets/img/slides/flexslider/img3.jpg" %}" alt="" />
+            <div class="flex-caption success">
+              <h2>Vota tus perfiles favoritos</h2>
+              <h4>Entra en nuestro sistema de votaciones y pon nota a los mejores perfiles</h4>
+            </div>
+            </li>
+            <li data-thumb="{% static "assets/img/slides/flexslider/img4.jpg" %}">
+            <img src="{% static "assets/img/slides/flexslider/img4.jpg" %}" alt="" />
+            <div class="flex-caption danger">
+              <h2>Querido diario...</h2>
+              <h4>Lleva al día tu agenda personal y además un diario personalizado</h4>
+            </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+<div class="container">
+  <div class="row">
+    <div class="span12">
+      <div class="tagline">
+        <div class="row">
+          <div class="span6">
+            <div class="tagline_text">
+              <h3 class="heading-success"><span class="btn btn-large btn-success"><i class="m-icon-big-swapdown m-icon-white"></i></span>&nbsp;&nbsp;<span class="text-success"><a name="registro">Registrate</a></span> y comienza a conocer gente</h3>
+ <form class="form col-md-12 center-block" id='newuser' method='post' enctype='multipart/form-data' action=''> {% csrf_token %}
+            <table class="table table-hover">       
+                  <tr>
+                      <td>Nombre: {{newuser.first_name.errors}}</td>
+                      <td>{{newuser.first_name}}</td>
+                  </tr>
+                  <tr>
+                      <td>Apellidos: {{newuser.last_name.errors}}</td>
+                      <td>{{newuser.last_name}}</td>
+                  </tr>
+                  <tr>
+                      <td>Email: {{newuser.email.errors}}</td>
+                      <td>{{newuser.email}}</td>
+                  </tr>
+                  <tr>
+                      <td>Contraseña: {{newuser.password1.errors}}</td>
+                      <td>{{newuser.password1}}</td>
+                  </tr>
+                  <tr>
+                      <td>Repita la contraseña: {{newuser.password2.errors}}</td>
+                      <td>{{newuser.password2}}</td>
+                  </tr>
+                  <tr>
+                      <td>Genero: {{newuser.genero.errors}}</td>
+                      <td>{{newuser.genero}}</td>
+                  </tr>
+                  <tr>
+                      <td>Fecha Nacimiento: {{newuser.nacimiento.errors}}</td>
+                      <td>{{newuser.nacimiento}}</td>
+                  </tr>
+                  <tr>
+                      <td colspan="2" align="center"><center><input type="checkbox" name="checkbox" value="check"> He leído y acepto los <a href="" data-toggle="modal" data-target="#myModal">Términos y Condiciones de uso</a></center></td>
+                  </tr>
+            </table>
+              <input type="hidden" name="valor" value="registro">
+              <button type="submit" class="span5 btn btn-success" onclick="if(!this.form.checkbox.checked){alert('Debe de aceptar los terminos y condiciones para registrarse');return false}">¡Regístrate!</button> 
+          </form>    
+            </div>
+          </div>
+          <div class="span6">
+            <div class="well">
+              <iframe class="video" src="http://player.vimeo.com/video/30585464?title=0&amp;byline=0">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 class="modal-title" id="myModalLabel">Terminos y Condiciones de uso</h3>
+      </div>
+      <div class="modal-body">
+       <center><textarea rows="15" class="span5">
+1.Su servicio: Su cuenta en slavida.net le provee la posibilidad de crear una o varios cuentas GRATIS. Usted es el único responsable por cualquier información contenida en sus cuentas. Aunque, si se reciben quejas acerca del lenguaje, contenido o gráficas contenidas en su servicio, slavida.net puede, a su sola discreción, eliminar el servicio en los servidores de slavida.net y suspenderlo. Usted no debe usar su servicio para publicar material, que slavida.net determine, a su sola discreción, ser ilegal, indecente o inaceptable. Para el propósito de esta políticas, "material" se le refiere a todas las formas de comunicación incluyendo descripciones narrativas, gráficas (incluyendo fotografías, ilustraciones, imágenes, dibujos, logos), programas ejecutables, grabaciones de audio y de video. 
+
+2.Uso ilegal: El poseedor de una cuenta slavida.net está de acuerdo de usar los servicios que slavida.net le ofrece solo con fines legales, conforme a todas las leyes aplicables. 
+
+3.Acceso ilimitado: slavida.net ha desarrollado una tecnología superior para proveerle a usted con un servicio de calidad totalmente gratuito. El uso de nuestros servicios para usuarios de alto volumen o comercial esta terminantemente prohibido. 
+
+4.Reventa de servicios: La reventa de algún servicio de slavida.net sin nuestra autorización escrita esta estrictamente prohibida. 
+
+5.Control del trafico: Nosotros queremos que obtenga el mejor uso posible de los servicios ofrecidos por slavida.net. Si su trafico llega a ser problemático o excesivo, le pediremos que retire su servicio. 
+
+
+Actividades y usos terminantemente prohibidos de nuestros servicios: 
+
+1.Daño a menores: El uso de slavida.net para dañar, o intento de daño, a menores de cualquier forma, incluyendo pero no limitando solamente a pornografía infantil, abuso de menores, maltrato, etc. será denunciado ante las autoridades pertinentes. 
+
+2.Amenazas e insultos: Uso de los servicios de slavida.net para transmitir cualquier tipo de material (por e-mail, foros, libros de visitas, espacio web o de cualquier otra manera) que amenace, anime al daño o a la destrucción corporal de una propiedad o persona. 
+
+3.Contenido para adultos: Uso de los servicios de slavida.net para transmitir cualquier contenido que sea considerado para adultos o pornográficos, como escenas de sexo explicito, desnudos integrales, etc. 
+
+4.Acoso: Uso de los servicios de slavida.net para transmitir cualquier material que acose a otro. 
+
+5.Actividad fraudulenta: Uso de los servicios de slavida.net para hacer ofertas fraudulentas para vender o para comprar productos, cosas, o servicios, o para avanzar cualquier tipo de spam financiero tal como "esquemas de pirámide", "esquemas de ponzi", "cartas en cadena", etc. 
+
+6.Mensajes no solicitados (SPAM): El uso de los servicios de slavida.net para transmitir cualquier mensaje comercial en forma de spam esta expresadamente prohibido. Las violaciones de este tipo darán lugar al fin inmediato de la cuenta de slavida.net causante del SPAM. 
+
+7.SPAM en foros, redes sociales, etc: slavida.net tiene una política de cero tolerancia para el uso de sus servicios para la inserción de los mensajes o de los anuncios comerciales, que violan las reglas, las regulaciones, el FAQ o los terminos de cualquier red social, foro o lista de correo. 
+
+8.Acceso no autorizado: El uso de los servicios de slavida.net para acceder, o procurar tener acceso, a las cuentas de otros usuarios, o penetrar, o procurar penetrar, en las medidas de seguridad de slavida.net o del software o de la dotación física de otra entidad, del sistema de comunicaciones electrónico, o de telecomunicaciones del sistema, si la intrusión da lugar a la corrupción o a la pérdida de datos, se prohíbe expresamente y la cuenta de usuario ofendiente sera finalizada inmediatamente. 
+
+9.Violación de los derechos de autor, patente, marca, secreto comercial, etc: El uso de los servicios de slavida.net para transmitir cualquier material incluyendo el que infringe a cualquier copyright, marca registrada, patente, secreto comercial u otros derechos propietarios de cualquier tercero, pero no limitado a, el copiado desautorizado del material con derechos de autor, la numeración y la distribución de fotografías de los compartimientos, de los libros, u otras fuentes con derechos de autor, y de la transmisión desautorizada de programas con derecho de autor. 
+
+10.Robo de información personal: Uso del servicio de slavida.net para recoger, o el intento de recoger, información personal sobre terceros sin su conocimiento o consentimiento. 
+
+11.Interrupciónes de Red y actividad no amigable: Uso del servicio slavida.net para cualquier actividad que afecte la capacidad de la gente o de sistemas para utilizar este servicio. Esto incluye la "negación de los ataques del servicio" (DOS) contra otra computadora principal de la red o usuario individual. 
+
+12.Fraude: Implica una mala representación del saber o una declaración, una escritura o una actividad engañosa hecha con el intento de que la persona que la recibe actuará sobre ella. 
+
+13.Distribución de virus: La distribución intencionada de programas que procura a y/o causar daño, el hostigamiento, o la molestia a las personas, los datos, y/o los sistemas informáticos se prohíben. Tal ofensa dará lugar al fin inmediato de la cuenta que lo realice. 
+
+14.Responsabilidad de terceras personas: Los usuarios de este servicio se harán responsables de cualquier actividad, usando su cuenta, que viola las guías de consulta creadas dentro de los términos y condiciones de uso. 
+
+15.Seguridad: Usted es responsable de cualquier uso erróneo de su cuenta, incluso si la actividad inadecuada fue confiada por un amigo, un miembro de la familia, una huésped o un empleado. Debe adoptar medidas de seguridad adecuadas para prevenir o de reducir al mínimo el uso desautorizado de su cuenta tomando medidas para asegurarse de que otros no tengan acceso desautorizado a su cuenta. Además, usted no puede utilizar su cuenta para practicar una abertura de seguridad de otra cuenta o para procurar tener el acceso desautorizado a otra red o servidor. 
+
+16.Protección de contraseña: Tu contraseña proporciona el acceso a su cuenta. Es su responsabilidad de mantener su contraseña segura. Compartir su contraseña y el acceso a su cuenta a usuarios desautorizados se prohíbe. Debes tener cuidado al evitar que otros usen su cuenta puesto que a usted se hará responsable de su uso. 
+
+17.Seguridad personal y de red: Los usuarios que violen los sistemas o la seguridad de la Red pueden incurrir en responsabilidad criminal o civil. slavida.net cooperará completamente con cualquier organismo oficial para tal fin. 
+
+18.Rendimiento de red: Los servicios de slavida.net utilizan recursos compartidos. El uso o el abuso excesivo de estos recursos compartidos de la red por un usuario puede tener un impacto negativo en el resto de los usuarios. El uso erróneo de los recursos de la red de una manera que deteriore el funcionamiento de la red esta prohibido por estos terminos y puede dar lugar al fin de su cuenta. 
+</textarea></center>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

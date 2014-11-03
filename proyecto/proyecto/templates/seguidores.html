@@ -1,0 +1,15 @@
+<html>
+<head>
+</head>
+
+	<ul>
+	<li>Usuario: {{usuario.username}}</li>
+	<li>Nombre: {{usuario.first_name}} {{usuario.last_name}}</li>
+	<li>Pensamientos: 
+	{% for i in pensamientos_usuario %}
+	{{i.texto}}
+	{% endfor %}
+	</li>
+	</ul>
+
+</html>

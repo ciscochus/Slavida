@@ -1,0 +1,331 @@
+{% extends 'base.html' %}
+  {% block titulo %} sLavida {% endblock %}
+{% load staticfiles %}
+{% block estilo %}
+<link href="{% static "assets/css/calendario/calendar.css" %}" rel="stylesheet" />
+<link href="{% static "assets/css/calendario/custom_2.css" %}" rel="stylesheet" />
+
+<script src="{% static "assets/js/calendario/modernizr.custom.63321.js" %}"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="{% static "assets/js/calendario/jquery.calendario.js" %}"></script>
+<script src="{% static "assets/js/calendario/data.js" %}"></script>
+<script src="{% static "assets/js/calendario/transition.js" %}"></script>
+<script src="{% static "assets/js/calendario/collapse.js" %}"></script>
+<script type="text/javascript">
+  function mostrarModal(d,m,y)
+     {
+        $("#id_fecha").val("");
+        $("#id_titulo").val("");
+        $("#id_lugar").val("");
+        $("#id_descripcion").val("");
+
+        if (d && m && y)
+        {
+          if(m<10)
+          {
+            m="0"+m;
+          }
+          var fecha = y+"-"+m+"-"+d;
+         $("#id_fecha").val(fecha);
+        }
+        $('#form_evento').attr('action', '/miagenda/');
+        $(".ejemplo-modal").modal("show");
+     }
+</script>
+{% endblock %}
+{% block contenido %}
+<body>
+<section id="subintro">
+
+</section>
+<section id="maincontent">
+<div class="container">
+<div class="row">
+    <div class="span8">
+      <!-- start article full post -->
+      <article class="blog-post">
+        <section class="main">
+          <div class="custom-calendar-wrap">
+            <div id="custom-inner" class="custom-inner">
+              <div class="custom-header clearfix">
+                <nav>
+                  <span id="custom-prev" class="custom-prev"></span>
+                  <span id="custom-next" class="custom-next"></span>
+                </nav>
+                <h2 id="custom-month" class="custom-month"></h2>
+                <h3 id="custom-year" class="custom-year"></h3>
+              </div>
+              <div id="calendar" class="fc-calendar-container"></div>
+            </div>
+          </div>
+        </section>
+      </article>
+    </div>
+
+
+    <div class="span4">
+      <aside>
+        <div id="listado-eventos" class="widget panel-group">
+        </div>
+      </aside>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade ejemplo-modal" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content" id="contenido-modal">
+      <form id='form_evento' method='post' enctype='multipart/form-data' action='/miagenda/' class="modal-form"> {% csrf_token %}
+        
+          <div class="form-group">
+            <label for="id_fecha">Fecha</label>
+            {{formevento.fecha}}
+          </div>
+          <div class="form-group">
+            <label for="id_titulo">Título</label>
+            {{formevento.titulo}}
+          </div>
+          <div class="form-group">
+            <label for="id_lugar">Lugar</label>
+            {{formevento.lugar}}
+          </div>
+          <div class="form-group">
+            <label for="id_descripcion">Descripcion</label>
+            {{formevento.descripcion}}
+          </div>
+          <button type="submit">Guardar</button>
+          
+        
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- End of modal -->
+    <script type="text/javascript"> 
+
+      $(function() {
+      
+        var eventos = {}
+
+        // recorremos todos los eventos y los cargamos en el calendario
+        {% for x in listeventos %}
+          fecha_evento = '{{x.fecha}}';
+          str = fecha_evento.split("/");
+          fecha_evento = str[1]+"-"+str[0]+"-"+str[2];
+          descripcion_evento = '<a href="#">';
+          descripcion_evento += '{{x.descripcion}}'
+          descripcion_evento += '</a>'
+          eventos[fecha_evento] = descripcion_evento;
+        {% endfor %}
+        console.log(eventos);
+
+        var transEndEventNames = {
+            'WebkitTransition' : 'webkitTransitionEnd',
+            'MozTransition' : 'transitionend',
+            'OTransition' : 'oTransitionEnd',
+            'msTransition' : 'MSTransitionEnd',
+            'transition' : 'transitionend'
+          };
+          var transEndEventName = transEndEventNames[ Modernizr.prefixed( 'transition' ) ];
+          $wrapper = $( '#custom-inner' ),
+          $calendar = $( '#calendar' ),
+          cal = $calendar.calendario( {
+            onDayClick : function( $el, $contentEl, dateProperties ) {
+
+              if( $contentEl.length > 0 ) {
+                showEvents( $contentEl, dateProperties );
+              }
+
+            },
+            caldata : eventos,
+            displayWeekAbbr : true
+          } ),
+          $month = $( '#custom-month' ).html( cal.getMonthName() ),
+          $year = $( '#custom-year' ).html( cal.getYear() );
+
+        $( '#custom-next' ).on( 'click', function() {
+          cal.gotoNextMonth( updateMonthYear );
+          $("div").off("click");
+          $('.fc-row > div').on('click',readyFormEvent);
+        } );
+        $( '#custom-prev' ).on( 'click', function() {
+          cal.gotoPreviousMonth( updateMonthYear );
+          $("div").off("click");
+          $('.fc-row > div').on('click',readyFormEvent);
+        } );
+
+        function updateMonthYear() {        
+          $month.html( cal.getMonthName() );
+          $year.html( cal.getYear() );
+        }
+
+        // just an example..
+        function showEvents( $contentEl, dateProperties ) {
+
+          hideEvents();
+          
+          var $events = $( '<div id="custom-content-reveal" class="custom-content-reveal"><h4>Events for ' + dateProperties.monthname + ' ' + dateProperties.day + ', ' + dateProperties.year + '</h4></div>' ),
+            $close = $( '<span class="custom-content-close"></span>' ).on( 'click', hideEvents );
+
+          $events.append( $contentEl.html() , $close ).insertAfter( $wrapper );
+          
+          setTimeout( function() {
+            $events.css( 'top', '0%' );
+          }, 25 );
+
+        }
+        function hideEvents() {
+
+          var $events = $( '#custom-content-reveal' );
+          if( $events.length > 0 ) {
+            
+            $events.css( 'top', '100%' );
+            Modernizr.csstransitions ? $events.on( transEndEventName, function() { $( this ).remove(); } ) : $events.remove();
+
+          }
+
+        }
+      function readyModal()
+      {
+          $('#form_evento').attr('action', '/miagenda/');
+          $("div").off("click");
+          //añadimos los atributos que activaran el modal
+          $('.fc-row > div').attr('data-toggle','modal');
+          $('.fc-row > div').attr('data-target','.ejemplo-modal');
+
+          $('.fc-row > div').on('click',readyFormEvent);
+      }
+     
+     function readyFormEvent()
+     {
+          var year = $('#custom-year').text();
+          //var month = $('#custom-month').text();
+          var day = $(this).children('.fc-date').text();
+
+          var month = cal.getMonth();
+          if(month<10)
+          {
+            month='0'+month;
+          }
+
+          if(day<10)
+          {
+            day='0'+day;
+          }
+        $("#id_fecha").val("");
+        $("#id_titulo").val("");
+        $("#id_lugar").val("");
+        $("#id_descripcion").val("");
+         var fecha = year+"-"+month+"-"+day;
+         $("#id_fecha").val(fecha);
+         //comprobamos si hay eventos el día seleccionado
+         if($(this).hasClass("fc-content"))
+         {
+            //si hay eventos, los cargamos en el listado
+            cargarEventos(day,month,year);
+         }
+         else
+         {
+            //si no hay eventos, limpiamos el listado
+            $("#listado-eventos").html("");
+            $('#form_evento').attr('action', '/miagenda/');
+            $(".ejemplo-modal").modal("show");
+         }
+         
+     }
+
+
+     
+
+     function cargarEventos(d,m,y)
+     {
+        $("#listado-eventos").html("");
+        $("#listado-eventos").append("<h1>"+d+"/"+m+"/"+y+"</h1>");
+        var i = 1;
+        {% for x in listeventos %}
+          fecha_evento = '{{x.fecha}}';
+          pk_evento = '{{x.pk}}';
+          str = fecha_evento.split("/");
+          d_evento = str[0];
+          m_evento = str[1];
+          y_evento = str[2];
+
+          if(d==d_evento && m==m_evento && y==y_evento)
+          {
+            descripcion_evento = '{{x.descripcion}}';
+            titulo_evento = '{{x.titulo}}';
+            lugar_evento = '{{x.lugar}}';
+            //titulo del evento
+            html_evento = "<div class='panel panel-default'>";
+            html_evento += "<h2 class='titulo panel-title'><a data-toggle='collapse' data-parent='#listado-eventos' href='#evento_"+i+"'>"+titulo_evento+"</a></h2>";
+            html_evento += "</div>";
+            //cuerpo del evento
+            html_evento += "<div id='evento_"+i+"' class='panel-collapse collapse evento'>";
+            html_evento += "<div class='panel-body'>";
+            html_evento += "<p class='descripcion'><span>Descripción: </span>"+descripcion_evento+"</p>";
+            html_evento += "<p class='lugar'><span>Lugar: </span>"+lugar_evento+"</p>";
+            html_evento += "<div class='button_delEvento' onclick='eliminar_evento("+pk_evento+",\""+titulo_evento+"\")'><h3>eliminar el evento</h3></div>";
+            html_evento += "<div class='button_editEvento' onclick='editar_evento("+pk_evento+")'><h3>editar el evento</h3></div>";
+            html_evento += "</div>";
+            html_evento += "</div>";
+            $("#listado-eventos").append(html_evento);
+            i++;
+          }
+        {% endfor %}
+
+        $("#listado-eventos").append("<div id='button_addEvento' class='boton add_evento' onclick='mostrarModal("+d+","+m+","+y+")'><h3>añadir un evento</h3></div>");
+
+     }
+
+      $(document).on("ready", function () {
+
+          $("div").off("click");
+          $('.fc-row > div').on('click',readyFormEvent);
+          
+      })
+     });
+
+      function eliminar_evento(id, titulo)
+      {
+        var pk_evento = id;
+        var titulo_evento = titulo;
+        var eliminar = confirm("¿Está seguro que desea eliminar el evento de la agenda con título "+titulo_evento+"?");
+
+        if(eliminar)
+        {
+          var url = "/miagenda/"+id+"/delete";
+          window.location.assign("/miagenda/"+id+"/delete");
+        }
+
+      }
+
+      function editar_evento(id)
+      {
+          // cambiamos el action form del formulario
+          $('#form_evento').attr('action', '/miagenda/'+id+'/');
+
+          // buscamos el evento a editar
+          {% for x in listeventos %}
+            pk = '{{x.pk}}';
+            if(id == pk)
+            {
+              descripcion_evento = '{{x.descripcion}}';
+              titulo_evento = '{{x.titulo}}';
+              lugar_evento = '{{x.lugar}}';
+              fecha_evento = '{{x.fecha}}';
+              str = fecha_evento.split("/");
+              d_evento = str[0];
+              m_evento = str[1];
+              y_evento = str[2];
+              $("#id_fecha").val(y_evento+"-"+m_evento+"-"+d_evento);
+              $("#id_titulo").val(titulo_evento);
+              $("#id_lugar").val(lugar_evento);
+              $("#id_descripcion").val(descripcion_evento);
+
+            }
+          {% endfor %}
+          $(".ejemplo-modal").modal("show");
+      }
+    </script>
+
+    {% endblock %}  

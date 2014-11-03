@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+  {% block titulo %} sLavida {% endblock %}
+{% load staticfiles %}
+{% block estilo %}
+  <script src="{% static "assets/js/jquery-1.8.2.min.js" %}"></script>
+  <script src="{% static "assets/js/jquery.easing.1.3.js" %}"></script>
+  <script src="{% static "assets/js/google-code-prettify/prettify.js" %}"></script>
+  <script src="{% static "assets/js/modernizr.js" %}"></script>
+{% endblock %}
+{% block contenido %}  
+<body>
+<section id="subintro">
+
+</section>
+<section id="maincontent">
+<div class="container">
+  <div class="row">
+    <div class="span4">
+      <aside>
+      <div class="widget">
+        <h4 class="heading-warning"><span class="btn btn-large btn-warning"><i class="m-icon-big-swapdown m-icon-white"></i></span>&nbsp;&nbsp; {{perfil.username}}</h4>
+        <img src="/media/{{perfil.imagen}}" class="img-polaroid alignleft span1" alt="" />
+        <h5>{{perfil.first_name}}</h5>
+        <p>
+           {{perfil.intereses}}
+        </p>
+        <a href="/{{perfil.username}}">Ver mi perfil..</a>
+      </div>
+      <div class="widget">
+        <h4 class="heading-info"><span class="btn btn-large btn-info"><i class="m-icon-big-swapdown m-icon-white"></i></span>&nbsp;&nbsp; Otros</h4>
+        <table class="table table-hover">
+            <tr>
+                <td>Religión:</td>
+                <td>{{perfil.religion}}</td>
+            </tr>
+            <tr>
+                <td>Intereses:</td>
+                <td>{{perfil.intereses}}</td>
+            </tr>
+            <tr>
+                <td>Otros:</td>
+                <td>{{perfil.otros}}</td>
+            </tr>
+            <tr>
+                <td>Orientación sexual:</td>
+                <td>{{perfil.orientacion_sex}}</td>
+            </tr>
+       </table>
+      </div>
+      </aside>
+    </div>
+    <div class="span8">
+      <h2>Personaliza tu perfil</h2>
+      <form id='formulario' method='post' enctype='multipart/form-data' action=''> 
+        {{editperfil.username.errors}}{{editperfil.first_name.errors}}{{editperfil.last_name.errors}}{{editperfil.religion.errors}}{{editperfil.intereses.errors}}{{editperfil.otros.errors}}{{editperfil.imagen.errors}}{{editperfil.cabecera.errors}}
+        {{editperfil.act_votacion.errors}}{% csrf_token %}
+        <table class="table table-striped">
+          <tr>
+            <td>
+          Nombre de usuario: </td><td>{{editperfil.username}}</td>
+        </tr>
+          <tr>
+            <td>Nombre: </td><td>{{editperfil.first_name}}</td>
+        </tr>
+          <tr>
+            <td>Apellidos: </td><td>{{editperfil.last_name}}</td>
+        </tr>
+          <tr>
+            <td>Religión: </td><td>{{editperfil.religion}}</td>
+        </tr>
+          <tr>
+            <td>Intereses: </td><td>{{editperfil.intereses}}</td>
+        </tr>
+         <tr>
+            <td> Otros: </td><td>{{editperfil.otros}}</td>
+        </tr>
+          <tr>
+            <td>Orientación sexual: </td><td>{{editperfil.orientacion_sex}}</td>
+        </tr>
+          <tr>
+            <td>Imagen de perfil:  <br><img src="/media/{{perfil.imagen}}" class="img-polaroid alignleft span1" alt="" /></td><td>{{editperfil.imagen}}</td>
+        </tr>
+          <tr>
+            <td>Imagen de cabecera:  <br><img src="/media/{{perfil.cabecera}}" class="img-polaroid alignleft span1" alt="" /></td><td>{{editperfil.cabecera}} </td>
+        </tr>
+        <tr>
+            <td>¿Desea recibir votaciones?:</td><td>{{editperfil.act_votacion}} </td>
+        </tr>
+        </table>
+          <div class="text-right"><button type="submit" class="btn btn-warning">Guardar</button>
+      </form>
+    </div>
+  </div>
+</div>
+</section>
+{% endblock %}
